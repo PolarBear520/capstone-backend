@@ -37,4 +37,57 @@
     }
 
 
+## Products
+
+### Get All Products
+- **Endpoint**: `/api/products`
+- **Method**: GET
+- **Description**: Retrieves a list of all products.
+- **Request Body**:
+  ```json
+    [
+    {
+        "id": "integer",
+        "name": "string",
+        "description": "string",
+        "price": "number",
+        "category": "string"
+    }
+    ]
+
+
+### Get Product by ID
+- **Endpoint**: `/api/products/{id}`
+- **Method**: GET
+- **Description**: Retrieves a product by its ID.
+- **Request Body**:
+  ```json
+    {
+    "id": "integer",
+    "name": "string",
+    "description": "string",
+    "price": "number",
+    "category": "string"
+    }
+
+### Search Products
+- **Endpoint**: `/api/products/search`
+- **Method**: GET
+- **Description**: Searches for products based on query parameters.
+- **Query Parameters**:
+    - **q**: Search term
+    - **category**: Filter by category
+- **Request Body**:
+  ```json
+    [
+    {
+        "id": "integer",
+        "name": "string",
+        "description": "string",
+        "price": "number",
+        "category": "string"
+    }
+    ]
+
+
 
