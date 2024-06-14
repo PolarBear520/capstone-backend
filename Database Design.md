@@ -208,7 +208,7 @@ CREATE TABLE Messages (
 
 ---
 
-![Database deployment](.\img\Database deployment.png)
+![Database deployment](./img/Database deployment.png)
 
 
 
@@ -216,7 +216,7 @@ CREATE TABLE Messages (
 
 ---
 
-![Remote access](.\img\Remote access.png)
+![Remote access](./img/Remote access.png)
 
 
 
@@ -224,5 +224,5 @@ CREATE TABLE Messages (
 
 ---
 
-![Docker & Redis](.\img\Docker & Redis.png)
+![Docker & Redis](./img/Docker & Redis.png)
 
