@@ -120,3 +120,108 @@ Indexes improve the performance of database queries by enabling faster data retr
 
 ### Query Optimization
 Optimizing database queries involves writing efficient SQL queries, avoiding unnecessary joins and subqueries, and using indexes effectively. It's also important to review and optimize the database schema to ensure it meets the application's performance requirements.
+
+
+
+## Physical Design
+
+---
+
+-- Create Users table
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
+    Username VARCHAR(255) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(20),
+    RegistrationDate DATETIME NOT NULL
+);
+
+-- Create Roles table
+CREATE TABLE Roles (
+    RoleID INT PRIMARY KEY AUTO_INCREMENT,
+    RoleName VARCHAR(255) NOT NULL
+);
+
+-- Create UserRoles table
+CREATE TABLE UserRoles (
+    UserID INT,
+    RoleID INT,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID),
+    PRIMARY KEY (UserID, RoleID)
+);
+
+-- Create Products table
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY AUTO_INCREMENT,
+    ProductName VARCHAR(255) NOT NULL,
+    Description TEXT,
+    Price DECIMAL(10, 2) NOT NULL,
+    UploadDate DATETIME NOT NULL,
+    SellerID INT,
+    ProductStatus ENUM('Available', 'Sold', 'Removed') NOT NULL,
+    FOREIGN KEY (SellerID) REFERENCES Users(UserID)
+);
+
+-- Create Orders table
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY AUTO_INCREMENT,
+    BuyerID INT,
+    ProductID INT,
+    OrderDate DATETIME NOT NULL,
+    OrderStatus ENUM('Pending', 'Completed', 'Cancelled') NOT NULL,
+    FOREIGN KEY (BuyerID) REFERENCES Users(UserID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- Create Categories table
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoryName VARCHAR(255) NOT NULL
+);
+
+-- Create ProductCategories table
+CREATE TABLE ProductCategories (
+    ProductID INT,
+    CategoryID INT,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+    PRIMARY KEY (ProductID, CategoryID)
+);
+
+-- Create Messages table
+CREATE TABLE Messages (
+    MessageID INT PRIMARY KEY AUTO_INCREMENT,
+    SenderID INT,
+    ReceiverID INT,
+    Content TEXT NOT NULL,
+    SendDate DATETIME NOT NULL,
+    IsRead BOOLEAN NOT NULL,
+    FOREIGN KEY (SenderID) REFERENCES Users(UserID),
+    FOREIGN KEY (ReceiverID) REFERENCES Users(UserID)
+);
+
+
+
+## Database deployment
+
+---
+
+![image-20240613152011640](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240613152011640.png)
+
+
+
+## Remote access
+
+---
+
+![image-20240614110539543](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240614110539543.png)
+
+
+
+## Docker & Redis
+
+---
+
+![image-20240613231618670](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240613231618670.png)
