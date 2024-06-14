@@ -208,7 +208,7 @@ CREATE TABLE Messages (
 
 ---
 
-![image-20240613152011640](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240613152011640.png)
+![Database deployment](.\img\Database deployment.png)
 
 
 
@@ -216,7 +216,7 @@ CREATE TABLE Messages (
 
 ---
 
-![image-20240614110539543](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240614110539543.png)
+![Remote access](.\img\Remote access.png)
 
 
 
@@ -224,4 +224,5 @@ CREATE TABLE Messages (
 
 ---
 
-![image-20240613231618670](C:\Users\Anwar\AppData\Roaming\Typora\typora-user-images\image-20240613231618670.png)
+![Docker & Redis](.\img\Docker & Redis.png)
+
