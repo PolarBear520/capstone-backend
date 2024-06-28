@@ -1,14 +1,31 @@
 package com.fdu.capstone.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+    private Long userId;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
-    // 构造函数、getter和setter方法
+    private String phoneNumber;
+
+    @Column(nullable = false)
+    private LocalDateTime registrationDate;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserRole> roles;
+
+    // Getters and Setters
 }
