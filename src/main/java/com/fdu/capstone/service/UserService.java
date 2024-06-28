@@ -3,28 +3,24 @@ package com.fdu.capstone.service;
 import com.fdu.capstone.model.User;
 import com.fdu.capstone.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
-    public User createUser(User user) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public User registerUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
