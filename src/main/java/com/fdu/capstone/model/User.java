@@ -19,13 +19,14 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(length = 20)
     private String phoneNumber;
 
     @Column(nullable = false)
     private LocalDateTime registrationDate;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserRole> roles;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRole> userRoles;
 
     // Getters and Setters
     public Long getUserId() {
@@ -76,11 +77,11 @@ public class User {
         this.registrationDate = registrationDate;
     }
 
-    public List<UserRole> getRoles() {
-        return roles;
+    public List<UserRole> getUserRoles() {
+        return userRoles;
     }
 
-    public void setRoles(List<UserRole> roles) {
-        this.roles = roles;
+    public void setUserRoles(List<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 }

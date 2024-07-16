@@ -4,10 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CapstoneApplicationTests {
+public class CapstoneApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
+        // 测试上下文加载
     }
-
 }
+

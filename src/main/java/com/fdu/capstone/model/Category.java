@@ -12,8 +12,31 @@ public class Category {
     @Column(nullable = false)
     private String categoryName;
 
-    @OneToMany(mappedBy = "category")
-    private List<ProductCategory> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<ProductCategory> productCategories;
 
     // Getters and Setters
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public List<ProductCategory> getProductCategories() {
+        return productCategories;
+    }
+
+    public void setProductCategories(List<ProductCategory> productCategories) {
+        this.productCategories = productCategories;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,16 +25,12 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
-        // 对密码进行加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRegistrationDate(LocalDateTime.now());
 
-        // 对其他敏感数据进行加密，例如email和phoneNumber
         try {
-            String encryptedEmail = EncryptionUtil.encrypt(user.getEmail());
-            user.setEmail(encryptedEmail);
-
-            String encryptedPhoneNumber = EncryptionUtil.encrypt(user.getPhoneNumber());
-            user.setPhoneNumber(encryptedPhoneNumber);
+            user.setEmail(encryptData(user.getEmail()));
+            user.setPhoneNumber(encryptData(user.getPhoneNumber()));
         } catch (Exception e) {
             logger.error("Error encrypting user data", e);
         }
@@ -42,17 +39,12 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        // 先对email进行加密，然后查找用户
         try {
-            String encryptedEmail = EncryptionUtil.encrypt(email);
+            String encryptedEmail = encryptData(email);
             User user = userRepository.findByEmail(encryptedEmail);
-
-            // 对其他敏感数据进行解密，例如phoneNumber
             if (user != null) {
-                String decryptedPhoneNumber = EncryptionUtil.decrypt(user.getPhoneNumber());
-                user.setPhoneNumber(decryptedPhoneNumber);
+                user.setPhoneNumber(decryptData(user.getPhoneNumber()));
             }
-
             return user;
         } catch (Exception e) {
             logger.error("Error finding user by email", e);
@@ -65,12 +57,8 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             try {
-                // 解密敏感数据
-                String decryptedEmail = EncryptionUtil.decrypt(user.getEmail());
-                user.setEmail(decryptedEmail);
-
-                String decryptedPhoneNumber = EncryptionUtil.decrypt(user.getPhoneNumber());
-                user.setPhoneNumber(decryptedPhoneNumber);
+                user.setEmail(decryptData(user.getEmail()));
+                user.setPhoneNumber(decryptData(user.getPhoneNumber()));
             } catch (Exception e) {
                 logger.error("Error decrypting user data", e);
             }
@@ -83,12 +71,8 @@ public class UserService {
         List<User> users = userRepository.findAll();
         for (User user : users) {
             try {
-                // 解密敏感数据
-                String decryptedEmail = EncryptionUtil.decrypt(user.getEmail());
-                user.setEmail(decryptedEmail);
-
-                String decryptedPhoneNumber = EncryptionUtil.decrypt(user.getPhoneNumber());
-                user.setPhoneNumber(decryptedPhoneNumber);
+                user.setEmail(decryptData(user.getEmail()));
+                user.setPhoneNumber(decryptData(user.getPhoneNumber()));
             } catch (Exception e) {
                 logger.error("Error decrypting user data", e);
             }
@@ -99,4 +83,13 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    private String encryptData(String data) throws Exception {
+        return data != null ? EncryptionUtil.encrypt(data) : null;
+    }
+
+    private String decryptData(String data) throws Exception {
+        return data != null ? EncryptionUtil.decrypt(data) : null;
+    }
 }
+
