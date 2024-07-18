@@ -178,19 +178,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
-    private String phoneNumber;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "username", nullable = false)
+    @Column(nullable = false)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "registration_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime registrationDate;
 
-    // Getters and setters
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -200,12 +200,12 @@ public class User {
         this.id = id;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
@@ -232,6 +232,7 @@ public class User {
         this.registrationDate = registrationDate;
     }
 }
+
 
 
 
