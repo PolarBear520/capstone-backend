@@ -6,6 +6,8 @@ import com.fdu.capstone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,9 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         try {
@@ -34,20 +39,25 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody User user) {
+    public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> loginRequest) {
         try {
-            String email = user.getEmail();
-            String password = user.getPassword();
-            User authenticatedUser = userService.authenticateUser(email, password);
+            String email = loginRequest.get("email");
+            String password = loginRequest.get("password");
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             UserDetails userDetails = userService.loadUserByUsername(email);
+
             String token = jwtUtil.generateToken(userDetails);
+
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
