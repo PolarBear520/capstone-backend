@@ -3,6 +3,9 @@ package com.fdu.capstone.service;
 import com.fdu.capstone.model.User;
 import com.fdu.capstone.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -13,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -53,5 +56,18 @@ public class UserService {
         } else {
             throw new Exception("Invalid credentials");
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities("USER")
+                .build();
     }
 }
