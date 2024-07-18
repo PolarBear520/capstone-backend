@@ -130,7 +130,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("testuser");
         user.setPassword("password");
-        user.setEmail("testuser@example.com");
+//        user.setEmail("testuser@example.com");
 
         when(userService.createUser(any(User.class))).thenReturn(user);
 
