@@ -1,3 +1,4 @@
+// UserControllerTest.java
 package com.fdu.capstone.controller;
 
 import com.fdu.capstone.model.User;
@@ -5,24 +6,31 @@ import com.fdu.capstone.security.JwtUtil;
 import com.fdu.capstone.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.security.core.userdetails.User;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.*;
 
-@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
+
+    private MockMvc mockMvc;
 
     @InjectMocks
     private UserController userController;
@@ -37,26 +45,44 @@ public class UserControllerTest {
     private AuthenticationManager authenticationManager;
 
     @BeforeEach
-    void setUp() {
-        userController = new UserController(userService, jwtUtil, authenticationManager);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @Test
-    void testAuthenticateUser() throws Exception {
-        Map<String, String> loginRequest = new HashMap<>();
-        loginRequest.put("email", "test@example.com");
-        loginRequest.put("password", "password");
+    public void testRegisterUser() throws Exception {
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("password");
 
-        Authentication authentication = mock(Authentication.class);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-        when(userService.loadUserByUsername(anyString())).thenReturn(mock(org.springframework.security.core.userdetails.User.class));
-        when(jwtUtil.generateToken(any(org.springframework.security.core.userdetails.UserDetails.class))).thenReturn("dummyToken");
+        when(userService.createUser(any(User.class))).thenReturn(user);
 
-        ResponseEntity<?> response = userController.authenticateUser(loginRequest);
+        String userJson = "{\"email\":\"test@example.com\",\"password\":\"password\"}";
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertTrue(((Map<String, String>) response.getBody()).containsKey("token"));
+        mockMvc.perform(post("/api/users/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email", is("test@example.com")));
     }
 
-    // 添加更多测试方法...
+    @Test
+    public void testAuthenticateUser() throws Exception {
+        com.fdu.capstone.model.User user = new com.fdu.capstone.model.User();
+        user.setEmail("test@example.com");
+        user.setPassword("password");
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
+        when(userService.loadUserByUsername(anyString())).thenReturn(org.springframework.security.core.userdetails.User.withUsername("test@example.com").password("password").authorities("USER").build());
+        when(jwtUtil.generateToken(any(UserDetails.class))).thenReturn("testToken");
+
+        String loginJson = "{\"email\":\"test@example.com\",\"password\":\"password\"}";
+
+        mockMvc.perform(post("/api/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", is("testToken")));
+    }
 }

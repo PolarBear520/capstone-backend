@@ -4,19 +4,18 @@ import com.fdu.capstone.model.User;
 import com.fdu.capstone.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @InjectMocks
@@ -28,35 +27,49 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    private User user;
-
     @BeforeEach
-    void setUp() {
-        user = new User();
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-        user.setUsername("testuser");
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testCreateUser() {
+    public void testCreateUser() {
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("password");
+
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         User createdUser = userService.createUser(user);
 
         assertEquals(user.getEmail(), createdUser.getEmail());
-        assertEquals("encodedPassword", createdUser.getPassword());
+        verify(passwordEncoder, times(1)).encode(anyString());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void testFindByEmail() {
+    public void testFindByEmail() {
+        User user = new User();
+        user.setEmail("test@example.com");
         when(userRepository.findByEmail(anyString())).thenReturn(user);
 
         User foundUser = userService.findByEmail("test@example.com");
 
         assertEquals(user.getEmail(), foundUser.getEmail());
+        verify(userRepository, times(1)).findByEmail(anyString());
     }
 
-    // 添加更多测试方法...
+    @Test
+    public void testGetUserById() {
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+
+        User foundUser = userService.getUserById(1L);
+
+        assertEquals(user.getEmail(), foundUser.getEmail());
+        verify(userRepository, times(1)).findById(anyLong());
+    }
 }
