@@ -49,15 +49,6 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public User authenticateUser(String email, String password) throws Exception {
-        User user = findByEmail(email);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
-        } else {
-            throw new Exception("Invalid credentials");
-        }
-    }
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = findByEmail(email);
@@ -70,4 +61,5 @@ public class UserService implements UserDetailsService {
                 .authorities("USER")
                 .build();
     }
+
 }
