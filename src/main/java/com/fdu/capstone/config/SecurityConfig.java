@@ -19,8 +19,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/publicKey", "/api/users/login", "/api/users/register").permitAll()
-                                .anyRequest().authenticated()
+                                // 允许所有请求，无需身份验证
+                                .anyRequest().permitAll()
                 )
                 .formLogin(formLogin ->
                         formLogin.permitAll()
