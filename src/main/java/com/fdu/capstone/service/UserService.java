@@ -34,15 +34,18 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByEmail(String email) {
+        logger.info("Finding user by email: {}", email);
         return userRepository.findByEmail(email);
     }
 
     public User getUserById(Long id) {
+        logger.info("Getting user by ID: {}", id);
         Optional<User> userOptional = userRepository.findById(id);
         return userOptional.orElse(null);
     }
 
     public List<User> getAllUsers() {
+        logger.info("Getting all users");
         return userRepository.findAll();
     }
 
@@ -51,6 +54,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User authenticateUser(String email, String password) throws Exception {
+        logger.info("Authenticating user with email: {}", email);
         User user = findByEmail(email);
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return user;
@@ -61,6 +65,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.info("Loading user by username: {}", email);
         User user = findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);

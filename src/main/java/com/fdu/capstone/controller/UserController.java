@@ -3,6 +3,8 @@ package com.fdu.capstone.controller;
 import com.fdu.capstone.model.User;
 import com.fdu.capstone.security.JwtUtil;
 import com.fdu.capstone.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -22,6 +25,7 @@ public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     public UserController(UserService userService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
@@ -56,6 +60,7 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            logger.error("Error authenticating user: {}", e.getMessage());
             return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
