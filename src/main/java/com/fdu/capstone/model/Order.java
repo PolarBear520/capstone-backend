@@ -11,21 +11,27 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private Long buyerId; // 添加buyerId字段
 
-    @ManyToOne
-    @JoinColumn(name = "buyer_id", nullable = false)
-    private User buyer;
-
-    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
-
-    @Column(name = "status", nullable = false)
     private String status;
 
-    // Getters and setters
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    // 构造函数
+    public Order() {
+    }
+
+    public Order(Long buyerId, LocalDateTime orderDate, String status, Product product) {
+        this.buyerId = buyerId;
+        this.orderDate = orderDate;
+        this.status = status;
+        this.product = product;
+    }
+
+    // Getter和Setter方法
 
     public Long getId() {
         return id;
@@ -35,20 +41,12 @@ public class Order {
         this.id = id;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getBuyerId() {
+        return buyerId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public User getBuyer() {
-        return buyer;
-    }
-
-    public void setBuyer(User buyer) {
-        this.buyer = buyer;
+    public void setBuyerId(Long buyerId) {
+        this.buyerId = buyerId;
     }
 
     public LocalDateTime getOrderDate() {
@@ -65,5 +63,13 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }
