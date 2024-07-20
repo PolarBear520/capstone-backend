@@ -1,9 +1,7 @@
 package com.fdu.capstone.controller;
 
 import com.fdu.capstone.model.Message;
-import com.fdu.capstone.model.User;
 import com.fdu.capstone.service.MessageService;
-import com.fdu.capstone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +16,9 @@ public class MessageController {
     @Autowired
     private MessageService messageService;
 
-    @Autowired
-    private UserService userService;
-
     @PostMapping
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
-        Message createdMessage = messageService.createMessage(message);
+        Message createdMessage = messageService.sendMessage(message);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
     }
 
@@ -41,33 +36,25 @@ public class MessageController {
 
     @GetMapping("/sender/{senderId}")
     public ResponseEntity<List<Message>> getMessagesBySender(@PathVariable Long senderId) {
-        User sender = userService.getUserById(senderId);
-        if (sender != null) {
-            List<Message> messages = messageService.getMessagesBySender(sender);
-            return ResponseEntity.ok(messages);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        List<Message> messages = messageService.getMessagesBySenderId(senderId);
+        return ResponseEntity.ok(messages);
     }
 
-    @GetMapping("/receiver/{receiverId}")
-    public ResponseEntity<List<Message>> getMessagesByReceiver(@PathVariable Long receiverId) {
-        User receiver = userService.getUserById(receiverId);
-        if (receiver != null) {
-            List<Message> messages = messageService.getMessagesByReceiver(receiver);
-            return ResponseEntity.ok(messages);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+//    @GetMapping("/receiver/{receiverId}")
+//    public ResponseEntity<List<Message>> getMessagesByReceiver(@PathVariable Long receiverId) {
+//        List<Message> messages = messageService.getMessagesByReceiverId(receiverId);
+//        return ResponseEntity.ok(messages);
+//    }
+
+    @GetMapping("/conversation/{conversationId}")
+    public ResponseEntity<List<Message>> getMessagesByConversation(@PathVariable Long conversationId) {
+        List<Message> messages = messageService.getMessagesByConversationId(conversationId);
+        return ResponseEntity.ok(messages);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMessage(@PathVariable Long id) {
-        try {
-            messageService.deleteMessage(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        messageService.deleteMessage(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -4,43 +4,35 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Orders")  // 避免使用保留字 "order"
+@Table(name = "orders")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long orderId;
-
-    @ManyToOne
-    @JoinColumn(name = "buyer_id", nullable = false)
-    private User buyer;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @ManyToOne
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private User buyer;
+
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "order_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    @Column(name = "status", nullable = false)
+    private String status;
 
-    // Getters and Setters
-    public Long getOrderId() {
-        return orderId;
+    // Getters and setters
+
+    public Long getId() {
+        return id;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public User getBuyer() {
-        return buyer;
-    }
-
-    public void setBuyer(User buyer) {
-        this.buyer = buyer;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Product getProduct() {
@@ -51,6 +43,14 @@ public class Order {
         this.product = product;
     }
 
+    public User getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(User buyer) {
+        this.buyer = buyer;
+    }
+
     public LocalDateTime getOrderDate() {
         return orderDate;
     }
@@ -59,17 +59,11 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
-}
-
-enum OrderStatus {
-    PENDING,
-    COMPLETED,
-    CANCELLED
 }

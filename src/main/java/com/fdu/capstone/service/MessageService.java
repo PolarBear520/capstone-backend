@@ -1,7 +1,6 @@
 package com.fdu.capstone.service;
 
 import com.fdu.capstone.model.Message;
-import com.fdu.capstone.model.User;
 import com.fdu.capstone.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public Message createMessage(Message message) {
+    public Message sendMessage(Message message) {
         return messageRepository.save(message);
     }
 
@@ -28,12 +27,16 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    public List<Message> getMessagesBySender(User sender) {
-        return messageRepository.findBySender(sender);
+    public List<Message> getMessagesBySenderId(Long senderId) {
+        return messageRepository.findBySenderId(senderId);
     }
 
-    public List<Message> getMessagesByReceiver(User receiver) {
-        return messageRepository.findByReceiver(receiver);
+//    public List<Message> getMessagesByReceiverId(Long receiverId) {
+//        return messageRepository.findByReceiverId(receiverId);
+//    }
+
+    public List<Message> getMessagesByConversationId(Long conversationId) {
+        return messageRepository.findByConversationId(conversationId);
     }
 
     public void deleteMessage(Long id) {

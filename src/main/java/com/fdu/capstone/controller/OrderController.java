@@ -1,9 +1,7 @@
 package com.fdu.capstone.controller;
 
 import com.fdu.capstone.model.Order;
-import com.fdu.capstone.model.User;
 import com.fdu.capstone.service.OrderService;
-import com.fdu.capstone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +15,6 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private UserService userService;
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
@@ -37,17 +32,6 @@ public class OrderController {
     public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
-    }
-
-    @GetMapping("/buyer/{buyerId}")
-    public ResponseEntity<List<Order>> getOrdersByBuyer(@PathVariable Long buyerId) {
-        User buyer = userService.getUserById(buyerId);
-        if (buyer != null) {
-            List<Order> orders = orderService.getOrdersByBuyer(buyer);
-            return ResponseEntity.ok(orders);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
     }
 
     @DeleteMapping("/{id}")

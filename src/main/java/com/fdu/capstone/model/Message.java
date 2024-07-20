@@ -4,52 +4,49 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "messages")
 public class Message {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id")
-    private Long messageId;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
+    @Column(name = "conversation_id", nullable = false)
+    private Long conversationId;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver;
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
 
-    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "send_date", nullable = false)
-    private LocalDateTime sendDate;
+    @Column(name = "timestamp", nullable = false)
+    private LocalDateTime timestamp = LocalDateTime.now();
 
-    @Column(name = "is_read", nullable = false)
-    private Boolean isRead;
+    // Getters and setters
 
-    // Getters and Setters
-    public Long getMessageId() {
-        return messageId;
+    public Long getId() {
+        return id;
     }
 
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public User getSender() {
-        return sender;
+    public Long getConversationId() {
+        return conversationId;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setConversationId(Long conversationId) {
+        this.conversationId = conversationId;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public Long getSenderId() {
+        return senderId;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
     }
 
     public String getContent() {
@@ -60,19 +57,11 @@ public class Message {
         this.content = content;
     }
 
-    public LocalDateTime getSendDate() {
-        return sendDate;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setSendDate(LocalDateTime sendDate) {
-        this.sendDate = sendDate;
-    }
-
-    public Boolean getIsRead() {
-        return isRead;
-    }
-
-    public void setIsRead(Boolean isRead) {
-        this.isRead = isRead;
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }
