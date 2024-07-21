@@ -2,8 +2,6 @@ package com.fdu.capstone.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "product")
 public class Product {
@@ -11,21 +9,31 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private Long id;
+    private Long productId;
 
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "price")
     private double price;
+
+    @Column(name = "product_name")
     private String productName;
+
+    @Column(name = "product_status")
     private String productStatus;
-    private LocalDateTime uploadDate;
+
+    @Column(name = "upload_date")
+    private String uploadDate;
+
+    @Column(name = "seller_id")
     private Long sellerId;
 
-    // Constructors, getters, and setters
-
+    // 构造函数
     public Product() {
     }
 
-    public Product(String description, double price, String productName, String productStatus, LocalDateTime uploadDate, Long sellerId) {
+    public Product(String description, double price, String productName, String productStatus, String uploadDate, Long sellerId) {
         this.description = description;
         this.price = price;
         this.productName = productName;
@@ -34,12 +42,13 @@ public class Product {
         this.sellerId = sellerId;
     }
 
-    public Long getId() {
-        return id;
+    // Getter和Setter方法
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public String getDescription() {
@@ -74,11 +83,11 @@ public class Product {
         this.productStatus = productStatus;
     }
 
-    public LocalDateTime getUploadDate() {
+    public String getUploadDate() {
         return uploadDate;
     }
 
-    public void setUploadDate(LocalDateTime uploadDate) {
+    public void setUploadDate(String uploadDate) {
         this.uploadDate = uploadDate;
     }
 
@@ -88,5 +97,10 @@ public class Product {
 
     public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
+    }
+
+    // 新增的getId方法
+    public Long getId() {
+        return productId;
     }
 }
