@@ -40,6 +40,12 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/seller/{sellerId}")
+    public ResponseEntity<List<Product>> getProductsBySellerId(@PathVariable Long sellerId) {
+        List<Product> products = productService.getProductsBySellerId(sellerId);
+        return ResponseEntity.ok(products);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         try {
@@ -50,3 +56,4 @@ public class ProductController {
         }
     }
 }
+

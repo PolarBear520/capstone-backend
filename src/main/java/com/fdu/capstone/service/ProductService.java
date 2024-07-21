@@ -31,7 +31,14 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> getProductsBySellerId(Long sellerId) {
+        return productRepository.findBySellerId(sellerId);
+    }
+
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
 }
+
+
+

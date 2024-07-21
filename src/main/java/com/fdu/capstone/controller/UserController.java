@@ -50,6 +50,9 @@ public class UserController {
             String email = loginRequest.get("email");
             String password = loginRequest.get("password");
 
+            // 添加调试信息
+            logger.info("Authenticating user with email: {}", email);
+
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             UserDetails userDetails = userService.loadUserByUsername(email);
 
@@ -61,17 +64,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error authenticating user: {}", e.getMessage());
-            return ResponseEntity.status(401).body("Invalid credentials");
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Authentication failed");
         }
     }
 
