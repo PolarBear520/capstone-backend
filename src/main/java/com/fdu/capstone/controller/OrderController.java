@@ -5,7 +5,6 @@ import com.fdu.capstone.model.Product;
 import com.fdu.capstone.model.User;
 import com.fdu.capstone.service.OrderService;
 import com.fdu.capstone.service.ProductService;
-import com.fdu.capstone.config.FixedUserConfig;
 import com.fdu.capstone.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,28 +28,26 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private FixedUserConfig fixedUserConfig;
-
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        // 获取当前登录用户
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userService.findByEmail(email);
 
-        // 设置买家ID
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         order.setBuyerId(currentUser.getId());
 
-        // 获取并设置产品实例
         if (order.getProduct() != null && order.getProduct().getId() != null) {
             Product product = productService.getProductById(order.getProduct().getId());
             if (product == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 如果product为null，返回400错误
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
             order.setProduct(product);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 确保传递的订单包含有效的产品ID
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         Order createdOrder = orderService.createOrder(order);
@@ -81,14 +78,15 @@ public class OrderController {
 
     @GetMapping("/my-orders")
     public ResponseEntity<List<Order>> getMyOrders() {
-        // 获取当前登录用户
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User currentUser = userService.findByEmail(email);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         List<Order> orders = orderService.getOrdersByBuyerId(currentUser.getId());
         return ResponseEntity.ok(orders);
     }
 }
-
-

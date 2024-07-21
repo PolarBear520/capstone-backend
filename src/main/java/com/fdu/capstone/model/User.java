@@ -22,6 +22,8 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime registrationDate;
 
+
+
     // Getters and setters
 
     public Long getId() {
