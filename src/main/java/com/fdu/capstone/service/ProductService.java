@@ -23,6 +23,10 @@ public class ProductService {
         return productOptional.orElse(null);
     }
 
+    public List<Product> searchProductsByName(String productName) {
+        return productRepository.findByProductNameContaining(productName);
+    }
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
