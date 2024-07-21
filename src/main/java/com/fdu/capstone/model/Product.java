@@ -1,59 +1,45 @@
 package com.fdu.capstone.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
+@Table(name = "product")
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private Long productId;
+    private Long id;
 
-    @Column(name = "product_name", nullable = false)
-    private String productName;
-
-    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-    @Column(name = "price", nullable = false)
-    private Double price;
-
-    @Column(name = "upload_date", nullable = false)
+    private double price;
+    private String productName;
+    private String productStatus;
     private LocalDateTime uploadDate;
+    private Long sellerId;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private User seller;
+    // Constructors, getters, and setters
 
-    @Column(name = "product_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProductStatus productStatus;
-
-    @ManyToMany
-    @JoinTable(
-            name = "product_categories",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
-
-    // Getters and Setters
-    public Long getProductId() {
-        return productId;
+    public Product() {
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
+    public Product(String description, double price, String productName, String productStatus, LocalDateTime uploadDate, Long sellerId) {
+        this.description = description;
+        this.price = price;
         this.productName = productName;
+        this.productStatus = productStatus;
+        this.uploadDate = uploadDate;
+        this.sellerId = sellerId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -64,12 +50,28 @@ public class Product {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
     }
 
     public LocalDateTime getUploadDate() {
@@ -80,33 +82,11 @@ public class Product {
         this.uploadDate = uploadDate;
     }
 
-    public User getSeller() {
-        return seller;
+    public Long getSellerId() {
+        return sellerId;
     }
 
-    public void setSeller(User seller) {
-        this.seller = seller;
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
     }
-
-    public ProductStatus getProductStatus() {
-        return productStatus;
-    }
-
-    public void setProductStatus(ProductStatus productStatus) {
-        this.productStatus = productStatus;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-}
-
-enum ProductStatus {
-    AVAILABLE,
-    SOLD,
-    REMOVED
 }

@@ -11,16 +11,16 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long buyerId; // 添加buyerId字段
-
+    private Long buyerId;
     private LocalDateTime orderDate;
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private Product product;
 
-    // 构造函数
+    // Constructors, getters, and setters
+
     public Order() {
     }
 
@@ -30,8 +30,6 @@ public class Order {
         this.status = status;
         this.product = product;
     }
-
-    // Getter和Setter方法
 
     public Long getId() {
         return id;
