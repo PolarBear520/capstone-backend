@@ -55,5 +55,19 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PostMapping("/{id}/uploadImageUrl")
+    public ResponseEntity<String> uploadImageUrl(@PathVariable Long id, @RequestBody String imageUrl) {
+        Product product = productService.getProductById(id);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        }
+
+        product.setImageUrl(imageUrl);
+        productService.updateProduct(product);
+
+        return ResponseEntity.ok("Image URL updated successfully");
+    }
+
 }
 

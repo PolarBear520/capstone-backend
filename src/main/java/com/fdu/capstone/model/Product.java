@@ -29,6 +29,9 @@ public class Product {
     @Column(name = "seller_id")
     private Long sellerId;
 
+    @Column(name = "imageUrl")
+    private String imageUrl; // 新增字段
+
     // 构造函数
     public Product() {
     }
@@ -102,5 +105,13 @@ public class Product {
     // 新增的getId方法
     public Long getId() {
         return productId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
