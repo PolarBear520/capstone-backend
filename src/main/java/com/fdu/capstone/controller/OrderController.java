@@ -1,5 +1,6 @@
 package com.fdu.capstone.controller;
 
+import com.fdu.capstone.security.JwtUtil;
 import com.fdu.capstone.model.Order;
 import com.fdu.capstone.model.Product;
 import com.fdu.capstone.model.User;
@@ -27,26 +28,32 @@ public class OrderController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User currentUser = userService.findByEmail(email);
+    public ResponseEntity<Order> createOrder(@RequestHeader("Authorization") String token, @RequestBody Order order) {
+        System.out.println("Received order: " + order);
+        String jwt = token.substring(7);
+        Long currentUser = jwtUtil.extractUserId(jwt);
+//        User currentUser = userService.findByEmail(email);
 
         if (currentUser == null) {
+            System.out.println("Missing buyerId");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        order.setBuyerId(currentUser.getId());
+        order.setBuyerId(currentUser);
 
         if (order.getProduct() != null && order.getProduct().getId() != null) {
             Product product = productService.getProductById(order.getProduct().getId());
             if (product == null) {
+                System.out.println("Product not found");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
             order.setProduct(product);
         } else {
+            System.out.println("Missing product ID");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

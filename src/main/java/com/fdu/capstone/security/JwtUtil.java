@@ -56,6 +56,10 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
     public Long extractUserId(String token) {
         final Claims claims = extractAllClaims(token);
         return claims.get("userId", Long.class);
