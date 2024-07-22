@@ -4,6 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -19,6 +21,9 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
     // 默认构造函数
     public User() {
     }
@@ -28,6 +33,7 @@ public class User implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.registrationDate = registrationDate;
     }
 
     // Getter 和 Setter 方法
@@ -89,4 +95,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
 }
