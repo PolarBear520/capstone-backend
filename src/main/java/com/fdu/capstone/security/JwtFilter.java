@@ -32,6 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
+        // 跳过特定路径的验证
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/orders")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
@@ -41,27 +49,31 @@ public class JwtFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
+                Long userId = jwtUtil.extractUserId(jwt);  // 提取用户ID
                 logger.debug("Username extracted from JWT: {}", username);
+                logger.debug("UserId extracted from JWT: {}", userId);
             } catch (Exception e) {
                 logger.error("JWT token extraction failed", e);
             }
+        } else {
+            logger.warn("Authorization header is missing or doesn't start with Bearer");
         }
 
         logger.debug("JWT Token: {}", jwt);
         logger.debug("Username from token: {}", username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = null;
+            UserDetails userDetails = null;
             try {
-                user = userService.findByEmail(username);
-                logger.debug("User loaded for username: {}", username);
+                userDetails = this.userService.loadUserByUsername(username);
+                logger.debug("UserDetails loaded for username: {}", username);
             } catch (Exception e) {
-                logger.error("UserService load failed", e);
+                logger.error("UserDetailsService load failed", e);
             }
 
-            if (user != null && jwtUtil.validateToken(jwt, user)) {
+            if (userDetails != null && jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        user, null, user.getAuthorities());
+                        userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 logger.debug("User authenticated: {}", username);
@@ -71,3 +83,4 @@ public class JwtFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
+

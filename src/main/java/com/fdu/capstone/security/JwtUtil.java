@@ -38,7 +38,7 @@ public class JwtUtil {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
+        claims.put("userId", user.getId());  // 添加用户ID到claims
         return createToken(claims, user.getUsername());
     }
 
@@ -73,6 +73,7 @@ public class JwtUtil {
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
+                .setAllowedClockSkewSeconds(60)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -82,9 +83,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, User user) {
+    public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         final Long userId = extractUserId(token);
-        return (username.equals(user.getUsername()) && userId.equals(user.getId()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getUsername()) && userId.equals(((User) userDetails).getId()) && !isTokenExpired(token));
     }
 }
