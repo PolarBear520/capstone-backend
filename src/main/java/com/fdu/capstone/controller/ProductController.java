@@ -69,5 +69,21 @@ public class ProductController {
         return ResponseEntity.ok("Image URL updated successfully");
     }
 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateProductStatus(@PathVariable Long id, @RequestBody String status) {
+        try {
+            Product updatedProduct = productService.updateProductStatus(id, status);
+            if (updatedProduct != null) {
+                return ResponseEntity.ok("Product status updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+
 }
 

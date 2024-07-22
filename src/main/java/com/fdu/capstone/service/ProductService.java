@@ -43,6 +43,25 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public Product updateProductStatus(Long productId, String status) {
+        if (!isValidStatus(status)) {
+            throw new IllegalArgumentException("Invalid product status");
+        }
+
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            product.setProductStatus(status);
+            return productRepository.save(product);
+        } else {
+            return null;
+        }
+    }
+
+    private boolean isValidStatus(String status) {
+        return "AVAILABLE".equals(status) || "REMOVED".equals(status) || "SOLD".equals(status);
+    }
+
 }
 
 
