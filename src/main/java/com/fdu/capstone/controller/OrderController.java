@@ -84,16 +84,18 @@ public class OrderController {
     }
 
     @GetMapping("/my-orders")
-    public ResponseEntity<List<Order>> getMyOrders() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        User currentUser = userService.findByEmail(email);
+    public ResponseEntity<List<Order>> getMyOrders(@RequestHeader("Authorization") String token) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String email = authentication.getName();
+//        User currentUser = userService.findByEmail(email);
+        String jwt = token.substring(7);
+        Long currentUser = jwtUtil.extractUserId(jwt);
 
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<Order> orders = orderService.getOrdersByBuyerId(currentUser.getId());
+        List<Order> orders = orderService.getOrdersByBuyerId(currentUser);
         return ResponseEntity.ok(orders);
     }
 }
