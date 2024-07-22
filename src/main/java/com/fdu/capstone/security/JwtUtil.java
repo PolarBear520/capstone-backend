@@ -36,33 +36,12 @@ public class JwtUtil {
         this.expirationTime = expirationTime;
     }
 
-//    public String generateToken(UserDetails userDetails) {
-//        Map<String, Object> claims = new HashMap<>();
-//        return createToken(claims, userDetails.getUsername());
-//    }
-//
-//    private String createToken(Map<String, Object> claims, String subject) {
-//        return Jwts.builder()
-//                .setClaims(claims)
-//                .setSubject(subject)
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-//                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-//                .compact();
-//    }
-//
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    // 修改 generateToken 方法
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());  // 添加用户ID到claims
+        claims.put("userId", user.getId());
         return createToken(claims, user.getUsername());
     }
 
-    // 修改 createToken 方法
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -73,12 +52,14 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 修改 extractUsername 方法（添加 extractUserId 方法）
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
     public Long extractUserId(String token) {
         final Claims claims = extractAllClaims(token);
         return claims.get("userId", Long.class);
     }
-
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -101,9 +82,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, User user) {
         final String username = extractUsername(token);
         final Long userId = extractUserId(token);
-        return (username.equals(userDetails.getUsername()) && userId.equals(((User) userDetails).getId()) && !isTokenExpired(token));
+        return (username.equals(user.getUsername()) && userId.equals(user.getId()) && !isTokenExpired(token));
     }
 }

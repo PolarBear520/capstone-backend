@@ -1,5 +1,6 @@
 package com.fdu.capstone.security;
 
+import com.fdu.capstone.model.User;
 import com.fdu.capstone.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +29,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -41,9 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
-                Long userId = jwtUtil.extractUserId(jwt);  // 提取用户ID
                 logger.debug("Username extracted from JWT: {}", username);
-                logger.debug("UserId extracted from JWT: {}", userId);
             } catch (Exception e) {
                 logger.error("JWT token extraction failed", e);
             }
@@ -53,17 +51,17 @@ public class JwtFilter extends OncePerRequestFilter {
         logger.debug("Username from token: {}", username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = null;
+            User user = null;
             try {
-                userDetails = this.userService.loadUserByUsername(username);
-                logger.debug("UserDetails loaded for username: {}", username);
+                user = userService.findByEmail(username);
+                logger.debug("User loaded for username: {}", username);
             } catch (Exception e) {
-                logger.error("UserDetailsService load failed", e);
+                logger.error("UserService load failed", e);
             }
 
-            if (userDetails != null && jwtUtil.validateToken(jwt, userDetails)) {
+            if (user != null && jwtUtil.validateToken(jwt, user)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                        user, null, user.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 logger.debug("User authenticated: {}", username);
@@ -72,5 +70,4 @@ public class JwtFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
 }
