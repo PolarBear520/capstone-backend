@@ -34,11 +34,11 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // 跳过特定路径的验证
-        String path = request.getRequestURI();
-        if (path.startsWith("/api/orders")) {
-            chain.doFilter(request, response);
-            return;
-        }
+//        String path = request.getRequestURI();
+//        if (path.startsWith("/api/orders")) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         final String authorizationHeader = request.getHeader("Authorization");
 
